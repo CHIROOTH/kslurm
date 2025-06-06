@@ -1,51 +1,42 @@
-Utility functions to make working with SLURM easier.
+# Utility functions to make working with SLURM easier
 
-# Installation
-The recommend way to install kslurm is via [`pipx`](https://pypa.github.io/pipx), a tool for installing python applications.
-This will make kslurm globally available without infecting your global python environment.
-Installation instructions for pipx can be found on their [website](https://pypa.github.io/pipx).
-Once installed, simply run
+## Installation
+
+The recommended way to install **kslurm** is via [`pipx`](https://pypa.github.io/pipx), a tool for installing Python applications. This ensures kslurm is globally available without affecting your global Python environment. Installation instructions for pipx can be found on their [website](https://pypa.github.io/pipx).
+Once pipx is installed, run:
 ```bash
 pipx install kslurm
 ```
-
-Note that kslurm requires Python 3.9 or higher.
-If pipx was installed using a lower version (e.g. 3.8), you will need to manually specify the python executable to use.
-Activate the appropriate python version (e.g. `module load python/3.10`) so that when you run `python --version`, the correct version appears.
-Then run
-
+> **Note:** kslurm requires Python 3.9 or higher. If pipx was installed using an older Python version (e.g. 3.8), you must specify the correct Python executable. First, activate the appropriate Python version (for example, `module load python/3.10`) so that `python --version` shows 3.9 or higher. 
+Then run:
 ```bash
 pipx install kslurm --python $(which python)
 ```
-
-For full kslurm features, including integration with `pip`, you need to source the init script, preferably in your `~.bash_profile` (the init script contains commands that may not be available on non-login nodes). You can do this by running:
-
+To enable full kslurm features (including integration with `pip`), source the init script, preferably in your `~/.bash_profile` (the init script may contain commands unavailable on non-login nodes). 
+Run:
 ```bash
 kpy bash >> $HOME/.bash_profile
 ```
-
-Finally, you need to complete some basic configuration. First, set your SLURM account. Run
-
+Finally, complete the basic configuration:
+1. **Set your SLURM account.**  
+   Run:
 ```bash
 kslurm config account -i
 ```
-
-This will begin an interactive session letting you choose from the accounts available to you. Each account will be listed with it's LevelFS. The higher the LevelFS, the more underused the account is, so prefer accounts with higher values.
-
-Next, set your pipdir. This will be used to store python wheels and virtual envs. It should be in a permanent storage or project directory. For instance, on ComputeCanada servers, it should go in `$HOME/projects/<account_name>/<user_name>/.kslurm`. Use the following command:
-
+This starts an interactive session listing the accounts available to you. Each account shows its LevelFS, the higher the LevelFS => the more underused the account is, so choose accounts with higher values.
+2. **Set your pip directory.**  
+This directory stores Python wheels and virtual environments. It should be in permanent storage or a project directory (e.g., on ComputeCanada servers, use `~/projects/<account_name>/<user_name>/.kslurm`). Run:
 ```bash
 kslurm config pipdir <dir>
 ```
 
-## Upgrading and uninstalling
+## Upgrading and Uninstalling
 
-The app can be updated by running
+- To update kslurm:
 ```bash
 pipx upgrade kslurm
 ```
-
-and removed using
+- To remove kslurm:
 ```bash
 pipx uninstall kslurm
 ```
@@ -55,313 +46,323 @@ pipx uninstall kslurm
 See the [dedicated page](docs/neuroglia-helpers.md).
 
 ## Legacy Installer
-kslurm includes an installation script that, previously, was the recommended install method.
-While it should technically still work, it is no longer supported and may be removed in the future.
-Its instructions are included, for reference, below.
 
-Users who previously installed kslurm via this script should switch to a pipx install for long term support. Simply uninstall `kslurm` using the instructions below, then install via pipx as described above
+kslurm includes an installation script that was previously the recommended method. While it may still work, it is no longer supported and may be removed in the future. Its instructions are provided here for reference. Users who installed kslurm via this script should switch to pipx for long-term support. Simply uninstall kslurm using the instructions below, then install via pipx as described above.
 
-Installation is via the following command:
+- **Install:**  
 ```
 curl -sSL https://raw.githubusercontent.com/pvandyken/kslurm/master/install_kslurm.py | python -
 ```
-
-If you wish to uninstall, run the same command with `--uninstall` added to the end.
-
-The package can be updated by running `kslurm update`.
-
-# Features
-Currently offers four commands:
-* kbatch: for batch submission jobs (no immediate output)
-* krun: for interactive submission
-* kjupyter: for Jupyter sessions
-* kpy: for python environment management
-
-All three use a regex-based argument parsing, meaning that instead of writing a SLURM file or supplying confusing `--arguments`, you can request resources with an intuitive syntax:
-
+- **Uninstall:**  
 ```
-krun 4 3:00 15G gpu
+curl -sSL https://raw.githubusercontent.com/pvandyken/kslurm/master/install_kslurm.py | python - --uninstall
 ```
-This command will request an interactive session with __4__ cores, for __3hr__, using __15GB__ of memory, and a __gpu__.
+- **Update:**  
+```
+kslurm update
+```
 
-Anything not specfically requested will fall back to a default. For instance, by default the commands will request 3hr jobs using 1 core with 4GB of memory. You can also run a predefined job template using -j _template_. Run either command with -J to get a list of all templates. Any template values can be overriden simply by providing the appropriate argument.
+## Installing via Git Clone
 
-The full list of possible requests, their syntaxes, and their defaults can be found at the bottom of the README.
+To install kslurm, clone the repository with the --recursive option:
+```
+git clone --recursive https://github.com/pvandyken/kslurm.git
+```
 
-## krun
+## Features
 
-krun is used for interactive sessions on the cluster. If you run krun all by itself, it will fire up an interactive session on the cluster:
+kslurm currently offers four commands:
 
+- **kbatch:** Batch submission jobs (no immediate output)  
+- **krun:** Interactive submission  
+- **kjupyter:** Jupyter sessions  
+- **kpy:** Python environment management  
+
+These commands use regex-based argument parsing, so instead of writing a SLURM file or supplying confusing `--arguments`, you can request resources with an intuitive syntax:
+```
+krun 4 3:00 15G gpu=v100:2
+```
+
+This command requests an interactive session with **4 cores**, for **3 hours**, using **15 GB** of memory, and **2 GPU** instances of the **v100**.
+
+Anything not specified falls back to a default. By default, commands request a 3 hr job with 1 core, 4 GB of memory, and no GPU. You can also run a predefined job template using `-j <template>`. Run any command with `-J` to list all templates. Any template values can be overridden by providing the appropriate argument.
+
+The full list of possible requests, their syntax, and defaults is at the end of this README.
+
+---
+
+### krun
+
+`krun` is used for interactive sessions on the cluster. Running `krun` without arguments starts an interactive session:
 ```
 krun
 ```
-You'll notice the server name in your terminal prompt will be changed to the cluster assigned to you. To end the session, simply use the `exit` command.
 
+You will notice your terminal prompt changes to the assigned cluster node. To end the session, use the `exit` command.
 You can also submit a specific program to run:
-
 ```
 krun 1:00 1G python my_program.py
 ```
-This will request a 1hr session with one core and 1 GB of memory. The output of the job will be displayed on the console. Note that your terminal will be tied to the job, so if you quit, or get disconnected, your job will end. (tmux can be used to help mitigate this, see this [tutorial from Yale](https://docs.ycrc.yale.edu/clusters-at-yale/guides/tmux/) for an excellent overview).
 
-Note that you should never request more than the recommended amount of time for interactive jobs as specified by your cluster administrator. For ComputeCanada servers, you should never request more than 3 hr. If you do, you'll be placed in the general pool for resource assignment, and the job could take hours to start. Jobs of 3hr or less typically start in less than a minute.
+This requests a **1 hr** session with **1 core** and **1 GB** of memory. The job's output appears on the console. Note that your terminal is tied to the job, if you quit or get disconnected, your job ends. (Using `tmux` can help; see this [tutorial from Yale](https://docs.ycrc.yale.edu/clusters-at-yale/guides/tmux/) for more details.)
 
-## kbatch
+> **Reminder:** Never request more time than your cluster administrator's recommended maximum for interactive jobs. For ComputeCanada servers, do not request more than **3 hr**. Exceeding that places you in the general pool for resource assignment, and your job could take hours to start. Jobs of **3 hr or less** typically start quickly without too much wait time.
 
-Jobs that don't require monitoring of the output or immediate submission, or will run for more than three hours, should be submitted using `kbatch`. This command schedules the job, then returns control of the terminal. Output from the job will be placed in a file in your current working directory entitled `slurm-[jobid].out`.
+---
 
-Improving on `sbatch`, `kbatch` does not require a script file. You can directly submit a command:
+### kbatch
 
+Use `kbatch` for jobs that don't require immediate output monitoring or run longer than three hours. This command schedules the job and returns control of the terminal. Output goes to a file named `slurm-[jobid].out` in your current directory.
+
+`kbatch` improves on `sbatch` by not requiring a script file. You can submit a command directly:
 ```
 kbatch 2-00:00 snakemake --profile slurm
 ```
-This will schedule a 2 day job running snakemake.
 
-Of course, complicated jobs can still be submitted using a script. Note that kbatch explictely specifies the resources it knows about in the command line. Command line args override `#SBATCH --directives` in the submit script, so at this time, you cannot use such directives to request resources unless they are not currently supported by kslurm. This may change in a future release.
+This schedules a **2 day** job running **snakemake**.
 
-## kjupyter
+For more complex jobs, you can still use a script. Note that `kbatch` explicitly specifies resources it knows about on the command line. Command-line arguments override `#SBATCH` directives in the submit script. Currently, you cannot request resources via `#SBATCH` directives unless they’re not supported by kslurm (this may change in future releases).
 
-This command requests an interactive job running a jupyter server. As with krun, you should not request a job more than the recommended maximum time for your cluster (3hr for ComputeCanada). If you need more time than that, just request a new job when the old one expires.
+---
 
-In addition to the desired resources, you should use the `--venv` flag to request a saved virtual environment (see `kpy save`). Jupyter will be started in whatever environment you request. `jupyter-lab` should already be installed in the venv.
+### kjupyter
+
+`kjupyter` requests an interactive job running a Jupyter server. Like with `krun`, do not request more time than the recommended maximum (3 hr for ComputeCanada). If you need more time, start a new job when the old one expires.
+
+Include the `--venv` flag to request a saved virtual environment (see `kpy save`). Jupyter starts in the specified environment. `jupyter-lab` should already be installed in that venv:
 ```
 kjupyter 32G 2 --venv <your_venv_name>
 ```
-This will start a jupyter session with 32 GB of memory and 2 cores.
+This starts a Jupyter session with **32 GB** of memory and **2 cores**.
 
-If no venv is specified, `kjupyter` will assume that the `jupyter-lab` command is already available on the `$PATH`. This is useful to run a global instance of jupyter, or jupyter installed in an active venv. Note that this prevents installing jupyter on local scratch, so performance will take a hit.
+If no venv is specified, `kjupyter` assumes `jupyter-lab` is available on the `$PATH`. This is useful for running a global Jupyter or a Jupyter installed in an active venv. Note that without a venv, Jupyter won't install on local scratch, so performance may be slower.
 
-# Unsupported SLURM args
+---
 
-Currently, the only way to supply arguments to SLURM beyond the items listed below is to list it as an `#SBATCH --directive` in a submission script. This only works with `kbatch`, not `krun` or `kjupyter`. A future release may support a method to supply these arguments directly on the command line. If you frequently use an option not listed below, make an issue and we can discuss adding support!
+## kpy
 
-# Slurm Syntax
+`kpy` provides tools to manage pip virtual environments on SLURM compute clusters, addressing issues unique to such servers:
 
-The full syntax is outlined below. You can always run a command with `-h` to get help.
+- **Ephemeral venvs:**  
+  On compute clusters, Python venvs are usually installed on local scratch storage, making them ephemeral. Installing a venv can take time, so `kpy` lets you archive entire venvs for permanent storage (e.g., on project-specific or home directories). Once saved, venvs can be quickly reloaded in a new compute environment. Copying venvs between locations is not trivial; this approach has been tested on ComputeCanada servers, but other environments may present issues.
 
-| Resource  |           Syntax           |                                                                   Default |                                                    Description |
-| :-------- | :------------------------: | ------------------------------------------------------------------------: | -------------------------------------------------------------: |
-| Time      | [d-]dd:dd -> [days-]hh:mm  |                                                                       3hr |                                   The amount of time requested |
-| CPUS      |     d -> just a number     |                                                                         1 |                                   The number of CPUs requested |
-| Memory    |            d(G/M)[B] -> e.g. 4G, 500MB |                                                            4GB | The amount of memory requested |
-| Account   | --account <_account name_> |                                                                           |                      The account under which to submit the job. A default account can be configured using `kslurm config account <account_name>` |
-| GPU       |            gpu             |                                                                     False |                         Provide flag to request 1 GPU instance |
-| Directory |  <_any valid directory_>   |                                                                        ./ | Change the current working directory before submitting the job |
-| x11       |           --x11            |                                                                     False |                   Requests x11 forwarding for GUI applications |
+- **No internet on compute nodes:**  
+  Compute nodes often lack internet access, limiting installation to locally available wheels. With `kpy`, venvs can be created on login nodes (with internet access), then saved and loaded on compute nodes. `kpy` also includes optional bash tools (see `kpy bash`), including a pip wrapper that prevents internet access on compute nodes and links pip to a local wheelhouse.
 
-# kpy
+### Commands
 
-kpy bundles a set of commands to help manage pip virtual environments on Slurm compute clusters, specifically addressing a few issues unique to such servers:
+#### `create`
 
-## Ephemeral venvs
-In most use cases, python venvs are installed on compute clusters, ideally on local scratch storage.
-This makes venvs inherently ephemeral.
-Because installing a venv can take an appreciable amount of time, kpy packs tools to archive entire venvs for storage in a permanent local repository (ideally located in project-specific or permanent storage). Once saved, venvs can be quickly reloaded into a new compute environment.
-
-Note that copying venvs from one location to another is not a trivial task. The current setup has been tested on ComputeCanada servers without any issues so far, but problems may arise on another environment.
-
-## No internet
-Compute clusters often don't have an internet connection, limiting our install repertoire to locally available wheels.
-With kpy, venvs can be created on a login node (using the available internet connection), then saved and loaded onto a compute node.
-Kpy also includes some optional bash tools (see `kpy bash`), including a wrapper around pip that prevents it from accessing the internet on compute nodes, and connecting it with a local private wheelhouse.
-
-## Commands
-### `create`
-
-```bash
-# usage
+```
 kpy create [<version|3.x>] [<name>]
 ```
 
-Create a new environment.
-Name is optional; if not provided, a placeholder name will be created.
-Version must be of the form `3.x` where x is any number (e.g `3.8`, `3.10`).
-If provided, the corresponding python version will be used in the virtual env.
-Note that an appropriate python executable must be somewhere on your path (e.g. for `3.8` -> `python3.8`).
-If not provided, the python version used to install kslurm will be used.
+Create a new environment. The name is optional; if not provided, a placeholder name is generated. The version must be `3.x` (e.g., `3.8`, `3.10`). The corresponding Python executable must be on your PATH (e.g., `python3.8`). If no version is provided, the Python version used to install kslurm is used.
 
-If run on a login node, the env will be created in a `$TMPDIR`.
-If run on a compute node, it will be created in `$SLURM_TMPDIR`.
+- On a login node, the venv is created in `$TMPDIR`.  
+- On a compute node, it is created in `$SLURM_TMPDIR`.
 
-### `save`
+#### `save`
 
-```bash
-# usage
+```
 kpy save [-f] <name>
 ```
 
-Save the venv to your permanent cache.
-This requires setting `pipdir` in the kslurm config (see below).
-By default, `save` will not oversave an existing cache, but `-f` can be included to override this behaviour.
-If a new name is provided, it will be used to update the current venv name and prompt.
+Save the venv to your permanent cache. This requires setting `pipdir` in the kslurm config (see above). By default, `save` won't overwrite an existing cache; use `-f` to force overwrite. If a new name is provided, it updates the current venv's name and prompt.
 
-### `load`
+#### `load`
 
-
-```bash
-# usage
+```
 kpy load [<name>] [--as <newname>]
 ```
 
-Load a saved venv from the cache.
-If a venv called `<name>` already exists, the command will fail, as each name can only be used once.
-`--as <newname>` works around this by changing the name of the loaded venv (the name of the saved venv will remain the same)
-Calling `load` without any `<name>` will print a list of current cached venvs.
+Load a saved venv from the cache. If a venv with `<name>` already exists, the command fails because each name is unique. Use `--as <newname>` to load under a different name (the saved venv's name remains the same). Running `kpy load` without a name lists all cached venvs.
 
-### `activate`
+#### `activate`
 
-```bash
-# usage
+```
 kpy activate [<name>]
 ```
 
-Activate venv initialized using `create` or `load`.
-Name will be the same as the name appearing in the venv prompt (i.e. the name provided on initial loading or creation, through `--as`, or the last saved name).
-This command only works on a compute node.
-Venvs created on a login node cannot be directly activated using kpy.
-Call without a name to list the venvs you can activate.
 
-### `list`
+Activate a venv created by `create` or loaded by `load`. The name is the venv’s prompt name (provided on creation, via `--as`, or by the last save). This command only works on a compute node. Venvs created on a login node cannot be directly activated on a compute node—load them first.
 
-```bash
-# usage
+Running `kpy activate` without a name lists the venvs available for activation.
+
+#### `list`
+
+```
 kpy list
 ```
 
-List all saved venvs (i.e. venvs you can `load`)
+List all saved venvs (i.e., those you can `load`).
 
-### `rm`
+#### `rm`
 
-```bash
-# usage
+```
 kpy rm <name>
 ```
 
 Delete a saved venv.
 
+#### `bash`
 
-### `bash`
-
-```bash
-# usage
+```
 kpy bash
 ```
 
-Echos a line of bash script that can be added to your `.bashrc` file:
+Echoes a line of bash script to add to your `~/.bashrc`:
 
-```bash
+```
 kpy bash >> $HOME/.bashrc
 ```
 
-This adds a few features to your command line environment:
+This adds features to your command line environment:
 
-- **pip wrapper**: Adds a wrapper around pip that detects if you are on a login node when running `install`, `wheel`, or `download`. If not on a login node, the `--no-index` flag will be appended to the command, preventing the use of an internet connection.
-- **wheelhouse management**: If `pipdir` is configured in the kslurm config, a wheelhouse will be created in your pip repository. Any wheels downloaded using `pip wheel` will be placed in that wheelhouse, and all wheels in the wheelhouse will be discoverable by `pip install`, both on login and compute nodes.
+- **pip wrapper:** Detects if you are on a login node when running `install`, `wheel`, or `download`. If not on a login node, appends `--no-index` to prevent internet access.
+- **wheelhouse management:** If `pipdir` is set in the kslurm config, a wheelhouse is created in your pip directory. Wheels downloaded via `pip wheel` go into that wheelhouse, and all wheels there are discoverable by `pip install`, both on login and compute nodes.
+
+---
 
 ## Kapp
 
-Kapp provides a set of tools to manage singularity containers. Pull images from docker hub without worring about image size, pulling the same image twice, or tracking whether your ":latest" image is up to date. Kapp manages your `.sif` image files so you can run them from anywhere on the cluster, without managing environment variables or remembering paths. Kapp managed images can be seamlessly consumed by snakemake workflows using the provided `--singularity-prefix` directory.
+Kapp provides tools to manage Singularity containers. Pull images from Docker Hub without worrying about image size, duplicate pulls, or tracking whether `:latest` is up to date. Kapp manages your `.sif` image files so you can run them from anywhere on the cluster without managing environment variables or remembering paths. Kapp-managed images integrate seamlessly with Snakemake using the `--singularity-prefix` directory.
 
 ### `pull`
 
-```bash
-# usage
+```
 kapp pull <image_uri> [-a <alias>] [--mem <memory>]
 ```
 
-Pull an image from a repository. Currently, only docker-hub is supported. The image uri should look like this:
+Pull an image from a repository. Currently, only Docker Hub is supported. The image URI format is:
 
-```bash
+```
 [<scheme>://[<organization>/]<repo>:<tag>]
-
-# examples
+```
+Examples:
+```
 docker://ubuntu:latest
 nipreps/fmriprep:21.0.2
 busybox:latest
 ```
 
-Note that the scheme is optional, and defaults to `docker`. The organization should be omitted for official docker images.
+- The scheme is optional (defaults to `docker`).
+- The organization is omitted for official Docker images.
 
-When you call `kapp pull`, the tag gets resolved to the specific container it points to. Thus, if you pull multiple tags pointing to the same container (e.g. `:latest` and its associated version tag), the container will only be pulled once. Plus, if tags get updated (e.g. `:latest` when a new release comes out), `kapp pull` will download the latest version of the tag, even if you've pulled that tag before.
+When you call `kapp pull`, the tag resolves to the specific container it points to. Pulling multiple tags that point to the same container (e.g., `:latest` and its version tag) downloads the container only once. If tags update (e.g., `:latest` moves to a new release), `kapp pull` fetches the latest version, even if you’ve pulled that tag before.
 
-When pulling a container, you can use `-a <alias>` to set an alias for the uri. This alias can be used in place of the uri in future kapp commands (except for `kapp pull`). For instance, you could download fmriprep and run it using the following:
+Use `-a <alias>` to set an alias for the URI. You can then use the alias instead of the URI in future kapp commands (except `kapp pull`). For example:
 
-```bash
+```
 kapp pull nipreps/fmriprep:latest -a fmriprep
 kapp run fmriprep
 ```
 
-Building `.sif` files from docker containers can consume a significant amount of memory and resources, making an unsuitable operation for login nodes. kapp works around this by first downloading the container on the login node, then scheduling a build step on an interactive compute node. It will automatically try to estimate how much memory will be needed, but if a build fails due to lack of memory, you can specify how much memory to request using the `--mem <memory>` parameter. Note that very small containers will be built directly on the login node without a compute step.
+Building `.sif` files from Docker containers can require significant memory and resources, making it unsuitable for login nodes. Kapp first downloads the container on the login node, then schedules a build step on an interactive compute node. It attempts to estimate required memory; if a build fails due to insufficient memory, specify a larger amount using `--mem <memory>`. Very small containers are built directly on the login node without a compute step.
+
+---
 
 ### `path`
-```bash
-# usage
+
+```
 kapp path <uri_or_alias>
 ```
 
-Prints the path of the specified container. This creates an easy way to use kapp managed containers with any arbitrary singularity command:
+Prints the path of the specified container. This makes it easy to use kapp-managed containers with any Singularity command:
 
-```bash
+```
 singularity -b /path/to/bind/dir $(kapp path my_container)
 ```
 
+---
+
 ### `image`
 
-```bash
-# usage
+```
 kapp image (list|rm <uri_or_alias>)
 ```
 
-Has two subcommands `list` and `rm <container>` to list all pulled containers and remove a container.
+- `kapp image list` lists all pulled containers.  
+- `kapp image rm <container>` removes a container alias (and any aliases pointing to it). It does **not** remove the underlying data, since other tags might reference it. To delete dangling containers (those not referenced by any local URIs), use `kapp purge dangling`.
 
-`kapp image rm` does not actually remove any data, it just removes the supplied uri (along with any aliases that point to it). This is because the underlying data may be used by other image tags. Dangling containers, which aren't pointed to by any local uris, can be deleted using `kapp purge dangling`
+---
 
 ### `purge`
 
-```bash
-# usage
+```
 kapp purge dangling
 ```
 
-Delete all dangling image files: i.e. files that aren't pointed to by any local uris. This command also removes any snakemake aliases pointing to the data.
+Deletes all dangling image files (files not referenced by any local URIs) and removes any Snakemake aliases pointing to them.
+
+---
 
 ### `alias`
 
-```bash
-# usage
+```
 kapp alias list
 ```
 
-List all aliases currently in use, along with the containers they point to.
+Lists all aliases currently in use and the containers they reference.
+
+---
 
 ### `exec`, `shell`, `run`
 
-```bash
-# usage
+```
 kapp (exec|shell|run) <uri_or_alias> [args...]
 ```
 
-Simple wrapper around `singularity (exec|shell|run)`. No singularity args can be specified, only args for the container. If you need to specify singularity args, call singularity directly and use `kapp path <container>` to get the container path. Note that most singularity args (e.g. directory bids) can be specified using environment variable, and such variables will be consumed by `kapp` as normal.
+Wrapper around `singularity (exec|shell|run)`. You cannot specify Singularity arguments—only container arguments. For Singularity options, call Singularity directly using `kapp path <container>` to get the container path. Most Singularity options (e.g., BIDS directory) can be set via environment variables, and `kapp` will consume them normally.
+
+---
 
 ### `snakemake`
 
-Prints the path to the snakemake directory. This path can be supplied to the snakemake parameter `--singularity-prefix`, allowing snakemake to seamlessly consume containers downloaded using kapp. This is especially usefull for cluster execution without internet connection: containers can be pulled in advance on a login node, then used by snakemake later.
+```
+kapp snakemake
+```
+
+Prints the path to the Snakemake directory. Use this path with Snakemake’s `--singularity-prefix` option to let Snakemake consume containers downloaded by kapp. This is especially useful for cluster execution without internet: pull containers in advance on a login node, then use them in Snakemake later.
+
+---
 
 ## Configuration
 
-kslurm currently supports a few basic configuration values, and more will come with time. All configuration can be set using the command
+kslurm supports several configuration values, with more to come. All configuration is done via:
 
-```bash
+```
 kslurm config <key> <value>
 ```
 
-You can print the value of a configuration using
+To print a configuration’s value:
 
-```bash
+```
 kslurm config <key>
 ```
 
 ### Current values
 
-* `account`: Default account to use for kslurm commands (e.g. `kbatch`, `krun`, etc)
-* `pipdir`: Directory to store cached venvs and wheels. Should be a project or permanent storage dir.
+- **account:** Default account for kslurm commands (`kbatch`, `krun`, etc).  
+- **pipdir:** Directory to store cached venvs and wheels (should be a project or permanent storage directory).
+
+## KSLURM Syntax
+
+The full syntax is outlined below. You can always run a command with `-h` to get help.
+
+| Resource  | Syntax                | Default  | Description                                    |
+| --------- | --------------------- | -------- | ---------------------------------------------- |
+| Time      | `[d-]dd:dd` - `d-hh:mm` | 3 hr     | Amount of time requested                     |
+| CPUs      | `d`                   | 1        | Number of CPUs requested                      |
+| Memory    | `d(G/M)[B]` (e.g. `4G`, `500MB`) | 4 GB     | Amount of memory requested                    |
+| Account   | `--account <name>`    | -        | SLURM account to use (default can be set via `kslurm config account <account_name>`) |
+| GPU       | `gpu=<type>:<number>` | 0        | GPU type and number (e.g. `gpu=v100:2`)         |
+| Directory | `<valid directory>`   | `./`     | Change working directory before submitting the job |
+| x11       | `--x11`               | False    | Request X11 forwarding for GUI applications    |
+
+---
+## Unsupported KSLURM Arguments
+
+Currently, the only way to supply SLURM arguments beyond those listed below is to include them as `#SBATCH --directive` lines in a submission script. This only works with `kbatch`, not with `krun` or `kjupyter`. A future release may allow specifying these arguments directly on the command line. If you frequently use an option not listed below, open an issue and we can discuss adding support.
+
+---
