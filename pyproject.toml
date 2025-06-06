@@ -22,7 +22,6 @@ classifiers = [
 ]
 packages = [
     { include = "kslurm" },
-    { include = "neuroglia_helpers" }
 ]
 
 [tool.poetry-dynamic-versioning]
