@@ -61,7 +61,8 @@ class SlurmCommand:
         if arglist["mem"].value is not None:
             self.mem = args.mem
 
-        self.gpu = bool(args.gpu)
+        # self.gpu = bool(args.gpu)
+        self.gpu = args.gpu
         self.x11 = bool(args.x11)
         config = appconfig.Config()
         if not args.account:
@@ -130,8 +131,10 @@ class SlurmCommand:
             f"--account={self.account} --time={self.time} "
             f"--cpus-per-task={self.cpu} --mem={self.mem}"
         )
+        # if self.gpu:
+        #     s += " --gres=gpu:1"
         if self.gpu:
-            s += " --gres=gpu:1"
+            s += f" --gpus-per-node={self.gpu}"
         if self.x11:
             s += " --x11"
         if self.name:

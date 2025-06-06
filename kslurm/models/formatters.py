@@ -42,3 +42,22 @@ def mem(mem: str):
         .to("megabyte")  # type: ignore
         .m
     )
+
+
+def gpu(raw: str):
+    if raw == "gpu":
+        return "1"
+
+    rhs = raw.split("=", 1)[1]
+
+    if rhs.isdigit():
+        return rhs
+
+    if ":" in rhs:
+        typ, cnt = rhs.split(":", 1)
+        if cnt.isdigit() and int(cnt) >= 1:
+            return f"{typ}:{cnt}"
+        else:
+            return f"{typ}:1"
+
+    return f"{rhs}:1"

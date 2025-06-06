@@ -66,7 +66,12 @@ class SlurmModel:
         examples=["3:00 (3hr)", "1-00:00 (1 day)"],
     )
 
-    gpu: bool = flag(match=["gpu"])
+    # gpu: bool = flag(match=["gpu"])
+    gpu: str = shape(
+        match=r"^gpu(?:=(?:(?P<type>[A-Za-z0-9_+\-]+)(?::(?P<count>\d+))?|(?P<just_number>\d+)|(?P<just_type>[A-Za-z0-9_+\-]+)))?$",
+        format=formatters.gpu,
+        default=""
+    )
 
     cpu: int = shape(
         match=r"^[0-9]+$",
