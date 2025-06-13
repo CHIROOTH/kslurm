@@ -14,7 +14,7 @@ krun 4 3:00 15G gpu
 
 This command will request an interactive session with __4__ cores, for __3hr__, using __15GB__ of memory, and a __gpu__.
 
-Anything not specfically requested will fall back to a default. For instance, by default the commands will request 3hr jobs using 1 core with 4GB of memory. You can also run a predefined job template using -j _template_. Run either command with -J to get a list of all templates. Any template values can be overriden simply by providing the appropriate argument.
+Anything not specfically requested will fall back to a default. For instance, by default the commands will request 3hr jobs using 1 core with 4GB of memory and no gpu. You can also run a predefined job template using -j _template_. Run either command with -J to get a list of all templates. Any template values can be overriden simply by providing the appropriate argument.
 
 The full list of possible requests, their syntaxes, and their defaults can be found at the bottom of the README.
 
