@@ -51,15 +51,16 @@ def test_params_can_be_altered(capsys: CaptureFixture[str]):
             ],
         )
 
-        out = capsys.readouterr()
-        print(str(out))
+        out = capsys.readouterr().out
+        print('out', str(out))
+        normalized = " ".join(out.split())
         assert (
             "--account=some-account --time=2-09:11:00 --cpus-per-task=8 "
-            "--mem=5000 --gres=gpu:1" in str(out)
+            "--mem=5000 --gpus-per-node=1" in normalized
         )
         subprocess.assert_called_with(
             "echo '#!/bin/bash\n\ncommand' | sbatch --account=some-account "
-            "--time=2-09:11:00 --cpus-per-task=8 --mem=5000 --gres=gpu:1 "
+            "--time=2-09:11:00 --cpus-per-task=8 --mem=5000 --gpus-per-node=1 "
             "--parsable ",
             shell=True,
             stdout=-1,
