@@ -59,7 +59,7 @@ def test_params_can_be_altered(capsys: CaptureFixture[str]):
             "--mem=5000 --gpus-per-node=h100:2"
         ) in normalized
         subprocess.assert_called_with(
-            "echo '#!/bin/bash\n\n./kslurm command | sbatch --account=some-account "
+            "echo '#!/bin/bash\n\n./kslurm command' | sbatch --account=some-account "
             "--time=2-09:11:00 --cpus-per-task=8 --mem=5000 --gpus-per-node=h100:2 "
             "--parsable ",
             shell=True,
