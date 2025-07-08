@@ -56,7 +56,7 @@ def test_params_can_be_altered(capsys: CaptureFixture[str]):
         normalized = " ".join(out.split())
         assert (
             "--account=some-account --time=2-09:11:00 --cpus-per-task=8 "
-            "--mem=5000 --gpus-per-node=h100:2" 
+            "--mem=5000 --gpus-per-node=h100:2"
         ) in normalized
         # subprocess.assert_called_with(
         #     "echo '#!/bin/bash\n\ncommand' | sbatch --account=some-account "

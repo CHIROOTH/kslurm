@@ -2,10 +2,10 @@ from __future__ import absolute_import
 
 import os
 import os.path
+import shutil
 import subprocess as sp
 import tarfile
 from pathlib import Path
-import shutil
 from typing import DefaultDict, Optional
 
 import attrs
@@ -77,8 +77,7 @@ def _pull(
         help="Amount of memory to allocate when building image",
     ),
     time: int = keyword(
-        ["--time"],
-        help="Amount of time in hours to allocate when building image"
+        ["--time"], help="Amount of time in hours to allocate when building image"
     )
     # executable: bool = flag(
     #     ["-x", "--exe"], help="Include --name as an executable on the $PATH"
@@ -171,11 +170,7 @@ def _pull(
         if mem
         else (min(64000, app.docker_data.size_mb * 20) if app.docker_data else 8000)
     )
-    time = (
-        time
-        if time
-        else ("1")
-    )
+    time = time if time else ("1")
     ret = krun.cli(
         [
             "krun",

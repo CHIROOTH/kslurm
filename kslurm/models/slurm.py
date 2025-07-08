@@ -68,9 +68,13 @@ class SlurmModel:
 
     # gpu: bool = flag(match=["gpu"])
     gpu: str = shape(
-        match=r"^gpu(?:=(?:(?P<type>[A-Za-z0-9_+\-]+)(?::(?P<count>\d+))?|(?P<just_number>\d+)|(?P<just_type>[A-Za-z0-9_+\-]+)))?$",
+        match=(
+            r"^gpu(?:=(?:(?P<type>[A-Za-z0-9_+\-]+)"
+            r"(?::(?P<count>\d+))?|(?P<just_number>\d+)|"
+            r"(?P<just_type>[A-Za-z0-9_+\-]+)))?$"
+        ),
         format=formatters.gpu,
-        default=""
+        default="",
     )
 
     cpu: int = shape(

@@ -52,7 +52,7 @@ def test_params_can_be_altered(capsys: CaptureFixture[str]):
         )
 
         out = capsys.readouterr().out
-        print('out', str(out))
+        print("out", str(out))
         normalized = " ".join(out.split())
         assert (
             "--account=some-account --time=2-09:11:00 --cpus-per-task=8 "
