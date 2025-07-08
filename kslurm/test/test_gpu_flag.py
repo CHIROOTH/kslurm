@@ -66,4 +66,4 @@ def test_params_can_be_altered(capsys: CaptureFixture[str]):
             stdout=-1,
             stderr=-2,
         )
-        assert Path.cwd() == starting_cwd / "kslurm"
+        assert Path.cwd() == starting_cwd
